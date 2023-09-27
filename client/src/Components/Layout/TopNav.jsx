@@ -30,9 +30,9 @@ export default function TopNav() {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, top:0, zIndex:10, backgroundColor:"#052a7dd6", }} position={"sticky"}>
       
-      <AppBar position="static" sx={{backgroundColor:"#052a7dd6"}}>
+      <AppBar position="static" sx={{backgroundColor:"#052a7dd6", top:0}}>
         <Toolbar>
           <IconButton
             size="large"

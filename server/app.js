@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import authRoute from './routes/auth.js';
+import userRoute from './routes/user.js';
+
 dotenv.config({
     path:".env"
 });
@@ -18,6 +20,7 @@ app.get('/', (req, res)=>{
     res.send("hello world");
 })
 app.use("/api/auth", authRoute);  // authentication route
+app.use("/api/user", userRoute); //user route
 
 
 //middleware for handling error

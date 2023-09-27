@@ -64,12 +64,3 @@ export const signup = async (req, res, next) => {
   };
 
 
-export const getUser=async (req, res, next) => {
-  try {
-    const id=req.params.id;
-    const author= await User.findById(id).select("+password");
-    res.status(200).json(author);
-  } catch (err) {
-    next(err);
-  }
-};

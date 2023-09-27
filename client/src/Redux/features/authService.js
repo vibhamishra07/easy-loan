@@ -32,10 +32,39 @@ const signup=async(userData)=>{
     return response.data
 }
 
+//Api calling for fullProfile Submission
+const submitFullUserProfile=async (data)=>{
+    const response = await axios.put(`${API_URL}/api/user/add-full-user-profile/${data.id}` , data)
+    if(response.data){
+     localStorage.setItem('user' ,JSON.stringify(response.data.user)); //storing response data to localstorage
+    }
+    return response.data
+}
+// get User
+const getUser=async (id)=>{
+    const response = await axios.get(`${API_URL}/api/user/getUser/${id}`)
+    if(response.data){
+     localStorage.setItem('user' ,JSON.stringify(response.data.user)); //storing response data to localstorage
+    }
+    return response.data
+}
+
+// request fro loan
+const requestForLoan=async (data)=>{
+    const response = await axios.post(`${API_URL}/api/user/request-for-loan/${data.id}`, data)
+    if(response.data){
+     localStorage.setItem('user' ,JSON.stringify(response.data.user)); //storing response data to localstorage
+    }
+    return response.data
+}
+
 const authService = {
     login,
     logout,
-    signup
+    signup,
+    submitFullUserProfile,
+    getUser,
+    requestForLoan
 }
 
 export default authService

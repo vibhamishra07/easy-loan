@@ -75,6 +75,54 @@ const authSlice = createSlice({
             state.message = action.payload
             state.user = null
         })
+        // Full Profile Data
+        .addCase(submitFullUserProfile.pending, (state)=>{
+            state.isLoading = true
+            state.isError = false
+            state.isSuccess = false
+        })
+        .addCase(submitFullUserProfile.fulfilled, (state, action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.user = action.payload.user
+            state.message = action.payload.message
+            state.isError = false
+        })
+        .addCase(submitFullUserProfile.rejected, (state, action)=>{
+            state.isLoading = false
+            state.isSuccess = false
+            state.isError = true
+            state.message = action.payload
+        })
+        // get User
+        .addCase(getUser.fulfilled, (state, action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.user = action.payload.user
+            // state.message = action.payload.message
+            state.isError = false
+        })
+
+        // Request for loan
+        .addCase(requestForLoan.pending, (state,action)=>{
+            state.isLoading = true
+            state.isError = false
+            state.isSuccess = false
+        })
+        .addCase(requestForLoan.fulfilled, (state, action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.user = action.payload.user
+            state.message = action.payload.message
+            state.isError = false
+        })
+        .addCase(requestForLoan.rejected, (state, action)=>{
+            state.isLoading = false
+            state.isSuccess = false
+            state.isError = true
+            state.message = action.payload
+        })
+
        
     }
 })
@@ -115,6 +163,39 @@ export const logout = createAsyncThunk("/signout" , async(thunkAPI)=>{
     const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
     return thunkAPI.rejectWithValue(message) 
 }
+})
+
+export const submitFullUserProfile= createAsyncThunk("/add-full-user-profile" , async(data,thunkAPI)=>{
+   
+    try {
+       return await authService.submitFullUserProfile(data);
+    } catch (error) {
+       const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+       return thunkAPI.rejectWithValue(message) 
+    }
+ })
+
+//  Get User
+export const getUser= createAsyncThunk("/getUser" , async(id,thunkAPI)=>{
+   
+    try {
+       return await authService.getUser(id);
+    } catch (error) {
+       const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+       return thunkAPI.rejectWithValue(message) 
+    }
+})
+
+// request fro loan
+
+export const requestForLoan=createAsyncThunk("/reqforloan" , async(data,thunkAPI)=>{
+   
+    try {
+       return await authService.requestForLoan(data);
+    } catch (error) {
+       const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+       return thunkAPI.rejectWithValue(message) 
+    }
 })
 
 

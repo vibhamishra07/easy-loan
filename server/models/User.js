@@ -5,18 +5,16 @@ import  Jwt  from "jsonwebtoken";
 import validator from "validator";
 
 const fullProfile=new Schema({
-    uniqueId:{
-        type:String,
-        required:[true, "Please enter your unique identification number"]
-    },
     gender:{
         type:String,
         enum: ["male", "female", "others"],
         required:[true, "Please enter your gender"]
     },
     dob:{
-        type:String,
-        required:[true, "Please enter your date of birth"]
+        type: Date,
+        required:[true, "Please enter your date of birth"],
+        trim: true,
+        
     },
     country:{
         type:String,
@@ -30,11 +28,30 @@ const fullProfile=new Schema({
         type:String,
         required:[true, "Please enter your city name"]
     },
+    state:{
+        type:String,
+        required:[true, "Please enter your state name"]
+    },
     address:{
         type:String,
         required:[true, "please enter your address"]
     }
 
+})
+
+const loanRequestSchema=new Schema({
+    amount:String,
+    term:Number,
+    allTerms:Array,
+    date: {
+        type:Date,
+        default:Date.now()
+    },
+    status:{
+        type:String,
+        enum:["pending", "approved", "rejected"],
+        default:"pending"
+    }
 })
 const UserSchema = new Schema({
     fullname:{
@@ -59,7 +76,8 @@ const UserSchema = new Schema({
         select: false,
         validate: [validator.isStrongPassword, "Password must be strong"],
     },
-    profile:[fullProfile],
+    profile:fullProfile,
+    loanRequests:[loanRequestSchema],
     isAdmin:{
         type:Boolean,
         default:false
