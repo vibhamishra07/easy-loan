@@ -1,11 +1,11 @@
 import { createError } from "../error.js";
-import mongoose from 'mongoose';
 import { User } from "../models/User.js";
+import  {Loanrequests } from "../models/LoanRequest.js";
 
 export const getUser=async (req, res, next) => {
     try {
       const id=req.params.id;
-      const user= await User.findById(id).select("+password");
+      const user= await User.findById({_id:id}).select("+password");
       res.status(200).json({success: true, user});
     } catch (err) {
       next(err);
@@ -45,10 +45,7 @@ export const addFullUserProfile=async (req, res, next) => {
 export const requestForLoan=async (req, res, next) => {
     try {
       const id=req.params.id;
-
-      if(id.toString() !== req.user._id.toString()){
-        return next(createError(401 , "User not authorized!"))
-      }
+      console.log(id)
       const {amount, term, inputFields}=req.body;
       const totalTermsAmountLength=inputFields.length;
       if(!term || !inputFields || !amount || totalTermsAmountLength!=term  ){
@@ -57,21 +54,25 @@ export const requestForLoan=async (req, res, next) => {
       let totalTermAmounts=0;
       inputFields.forEach(element => {
         if(!element.termAmount || !element.termRepaymentDate) return next(createError(404, "Please fill all the terms details"))
-        totalTermAmounts+=element.termAmount
+        totalTermAmounts+=parseInt(element.termAmount)
       });
-
-      if(totalTermAmounts!=amount) return next(createError(404, "Please fill terms amount equals to total amount"))
-      const user= await User.findOneAndUpdate({ _id:id },{
-        $set:{
-        loanRequests:{
+      console.log(totalTermAmounts)
+      if(totalTermAmounts!=parseInt(amount)) return next(createError(404, "Please fill terms amount equals to total amount"))
+      const newLoanRequest= new Loanrequests({
           amount,
           term,
           allTerms:inputFields,
-          status:"pending"
-        }}
-      },{ new: true }).select("+password");
+          borrowerId:req.params.id
+      })
 
-      
+      await newLoanRequest.save();
+      console.log(newLoanRequest._id)
+      const user=await User.findByIdAndUpdate({_id:id},{
+        $push:{
+            loanRequests:newLoanRequest._id
+        }
+      },{ new: true }).select("+password")
+
       res.status(200).json({success:true, message:"Loan Requested Successfully, Wait for Approval", user});
     } catch (err) {
       next(err);

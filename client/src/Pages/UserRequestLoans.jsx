@@ -52,11 +52,11 @@ const UserRequestLoans = () => {
   }
   return (
 
-    <form
+    (user.profile)?(<form
       autoComplete="off"
       noValidate
       onSubmit={handleSubmit}
-      style={{padding: "20px 70px 20px 70px"}}
+      style={{padding: "20px 70px 20px 70px", width:"83%"}}
     >
       <Card>
         <CardHeader
@@ -140,7 +140,10 @@ const UserRequestLoans = () => {
           </Button>
         </CardActions>
       </Card>
-    </form>
+    </form>):(
+      <Box sx={{paddingTop:"40px", width:"83%"}}>Please First Complete Your Profile
+      </Box>
+    )
   )
 }
 

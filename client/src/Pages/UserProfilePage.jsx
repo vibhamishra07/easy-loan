@@ -8,8 +8,10 @@ import {
     Divider,
     Typography
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ProfileForm } from '../Components/UserProfileComponents/ProfileForm';
+import { useEffect } from 'react';
+import { getUser } from '../Redux/features/authSlice';
 
 const user = {
     avatar: '/assets/avatars/avatar-anika-visser.png',
@@ -22,9 +24,13 @@ const user = {
 
 export const UserProfilePage = () => {
     const { user } = useSelector((state) => state.auth);
+    const dispatch=useDispatch();
+    useEffect(()=>{
+    user&&dispatch(getUser({id:user._id}))
+  },[user])
     return (
-        <Box style={{ position: "relative", width: "-webkit-fill-available", gap:"50px", padding: "20px 10px 20px 10px", alignItems:"center",  display: "flex", flexDirection:"column" }}>
-            <Box sx={{ width: "50%", height: "max-content" }}>
+        <Box sx={{ position: "relative", width: "83%", gap:"50px",  alignItems:"center",  display: "flex", flexDirection:"column" }}>
+            <Box sx={{ width: "50%", height: "max-content",padding: "20px 10px 20px 10px", }}>
                 <Card  >
                     <CardContent>
                         <Box

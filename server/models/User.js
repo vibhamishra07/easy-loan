@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import  Jwt  from "jsonwebtoken";
 import validator from "validator";
 
+
 const fullProfile=new Schema({
     gender:{
         type:String,
@@ -39,20 +40,7 @@ const fullProfile=new Schema({
 
 })
 
-const loanRequestSchema=new Schema({
-    amount:String,
-    term:Number,
-    allTerms:Array,
-    date: {
-        type:Date,
-        default:Date.now()
-    },
-    status:{
-        type:String,
-        enum:["pending", "approved", "rejected"],
-        default:"pending"
-    }
-})
+
 const UserSchema = new Schema({
     fullname:{
         type: String,
@@ -77,21 +65,17 @@ const UserSchema = new Schema({
         validate: [validator.isStrongPassword, "Password must be strong"],
     },
     profile:fullProfile,
-    loanRequests:[loanRequestSchema],
+    loanRequests: [
+        {
+          type: mongoose.Schema.Types.ObjectId, // Change "Type" to "type"
+          ref: 'Loanrequests'
+        },
+    ],
     isAdmin:{
         type:Boolean,
         default:false
     },
 
-    adminDetails:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Admin', // Reference to the Admin model
-        validate: {
-            validator: function () {
-              return this.isAdmin === true;
-            },
-        }
-    }
 }, {timestamps: true});
 
 

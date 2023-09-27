@@ -2,7 +2,7 @@ import React from 'react'
 
 const UserSettings = () => {
   return (
-    <div>UserSettings</div>
+    <div style={{width:"83%"}}>UserSettings</div>
   )
 }
 
