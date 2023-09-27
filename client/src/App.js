@@ -25,9 +25,9 @@ function App() {
     dispatch(reset());
   }, [isError, isSuccess, message]);
 
-  useEffect(()=>{
-    dispatch(getUser({id:user._id}))
-  },[])
+  // useEffect(()=>{
+  //   user&&dispatch(getUser({id:user._id}))
+  // },[user])
 
   return (
     <div className="App">

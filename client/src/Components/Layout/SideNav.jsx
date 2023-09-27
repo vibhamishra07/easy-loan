@@ -12,7 +12,7 @@ const SideNav = () => {
     
   return (
     <>
-    <Box sx={{width:"200px", minheight:'max-content', height:"90.8vh", display:"flex", justifyContent:"space-between", position:"sticky", top:'64px'}}>
+    <Box sx={{width:"200px", padding:"0px 10px 0px 10px", minheight:'max-content', height:"90.8vh", display:"flex", justifyContent:"space-between", position:"sticky", top:'64px'}}>
      <Box sx={{flex:1, padding:"10px 10px 0 10px"}}>
      <List sx={style} component="nav" aria-label="Nav Items">
       <ListItem button sx={{display:"flex", justifyContent:"center"}}>

@@ -19,15 +19,15 @@ const date = new Date();
 export const ProfileForm = () => {
     const {user}=useSelector((state)=>state.auth)
     const dispatch=useDispatch();
-    console.log(user.profile.gender)
+   console.log(user)
   const [values, setValues] = useState({
-    dob: new Date(user.profile.dob).toLocaleDateString() || '',
-    gender: user.profile.gender || '',
-    city: user.profile.city || '',
-    address: user.profile.address || '',
-    pinCode: user.profile.pinCode || '',
-    state: user.profile.state || '',
-    country: user.profile.country || ''
+    dob: (user&& user.profile)?(new Date(user&&user.profile.dob).toLocaleDateString()) : '',
+    gender: (user&& user.profile)?user.profile.gender:'',
+    city: (user&& user.profile)?user.profile.city : '',
+    address: (user&& user.profile)?user.profile.address:'',
+    pinCode: (user&& user.profile)?user.profile.pinCode :'',
+    state: (user&& user.profile)?user.profile.state :'',
+    country: (user&& user.profile)?user.profile.country : ''
   });
   
   const handleChange = (event)=>{
@@ -50,7 +50,7 @@ export const ProfileForm = () => {
       autoComplete="off"
       noValidate
       onSubmit={handleSubmit}
-      style={{paddingTop:"20px"}}
+      style={{paddingTop:"20px", paddingBottom:"20px"}}
     >
       <Card>
         <CardHeader
