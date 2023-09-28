@@ -79,11 +79,11 @@ export const UserProfilePage = () => {
                     </CardActions>
                 </Card>
             </Box>
-            <Box sx={{dispaly:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", width:"80%",}}>
+            {!user.isAdmin&&<Box sx={{dispaly:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", width:"80%",}}>
                 <Typography variant='h4'>Complete Your Profile</Typography>
                 <ProfileForm/>
 
-            </Box>
+            </Box>}
         </Box>
     )
 }

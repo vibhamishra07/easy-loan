@@ -8,8 +8,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import Paper from "@mui/material/Paper";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { getAllLoans } from '../Redux/features/Loans/loanSlice';
+import { Link } from 'react-router-dom';
 
 function createData(events, dates) {
     return { events, dates };
@@ -30,19 +32,47 @@ const rows = [
 
 const UserAllLoans = () => {
     const {user}=useSelector((state)=>state.auth);
+    // const {allLoans}=useSelector((state)=>state.loan);
     console.log(user.loanRequests)
+    const dispatch=useDispatch();
     const [pg, setpg] = React.useState(0);
     const [rpg, setrpg] = React.useState(5);
- 
-    // useEffect(()=>{
-    //     dispatch(getUsersLoans(user.loanRequests));
-    // })
+    const [allLoans, setAllLoans]=useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          if (user && !user.isAdmin) {
+            console.log(user._id);
+            try {
+              const response = await dispatch(getAllLoans(user._id)); // Assuming user._id is available
+              console.log(response); 
+              setAllLoans(response.payload.allLoans);
+            } catch (error) {
+              console.error("Error fetching loans:", error);
+            }
+          }else if(user && user.isAdmin){
+            console.log(user._id);
+            try {
+              const response = await dispatch(getAllLoans(user._id)); // Assuming user._id is available
+              console.log(response); 
+              setAllLoans(response.payload.allLoans);
+            } catch (error) {
+              console.error("Error fetching loans:", error);
+            }
+          }
+        };
+      
+        fetchData();
+      }, [user, dispatch]);
+      
+
+    // {loans && console.log(loans)}
     function handleChangePage(event, newpage) {
         setpg(newpage);
     }
   
     function handleChangeRowsPerPage(event) {
-        setrpg(parseInt(event.target.value, 10));
+        setrpg(parseInt(event.target.value,allLoans&& allLoans.length));
         setpg(0);
     }
   return (
@@ -50,32 +80,30 @@ const UserAllLoans = () => {
         <Paper>
             <h1 style={{ textAlign: "center", color: "green" , paddingBottom:"10px"}}>All Loans Status</h1>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} 
-                    aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Event</TableCell>
-                            <TableCell align="right">
-                                Date
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows.slice(pg * rpg, pg *rpg + rpg).map((row) => (
-                            <TableRow
-                                key={row.name}
-                                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                            >
-                                <TableCell component="th" 
-                                    scope="row">
-                                    {row.events}
-                                </TableCell>
-                                <TableCell align="right">
-                                    {row.dates}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+  <TableHead>
+    <TableRow>
+      <TableCell>Amount</TableCell>
+      <TableCell>Term</TableCell>
+      <TableCell>Status</TableCell>
+      <TableCell>More Details</TableCell>
+
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    {allLoans.length > 0  &&
+      allLoans.map((element, index) => (
+        <TableRow key={index}>
+          <TableCell>{element.amount}</TableCell>
+          <TableCell>{element.term}</TableCell>
+          <TableCell>{element.status}</TableCell>
+          <TableCell><Link to={`/loan/${element._id}`}>click</Link></TableCell>
+
+        </TableRow>
+      ))}
+  </TableBody>
+</Table>
+
             </TableContainer>
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}

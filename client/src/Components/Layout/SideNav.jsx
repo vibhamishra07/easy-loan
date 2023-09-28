@@ -1,5 +1,6 @@
 import { Box, Divider, List, ListItem, ListItemText } from '@mui/material'
 import React from 'react'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const style = {
@@ -9,6 +10,7 @@ const style = {
     height:"100px !important"
   };
 const SideNav = () => {
+  const { user}=useSelector((state)=>state.auth);
     
   return (
     <>
@@ -22,9 +24,9 @@ const SideNav = () => {
       <ListItem button divider sx={{display:"flex", justifyContent:"center"}}>
       <Link to="/all-loans"  style={{textAlign:"center", color:"black", textDecoration:"none",textAlign:"center"}}><ListItemText primary="ALL Loans"/></Link> 
       </ListItem>
-      <ListItem button sx={{display:"flex", justifyContent:"center"}}>
+      {!user.isAdmin &&<ListItem button sx={{display:"flex", justifyContent:"center"}}>
        <Link to="/request-loan"  style={{textAlign:"center", color:"black", textDecoration:"none",textAlign:"center"}}><ListItemText primary="Request For Loan"/></Link> 
-      </ListItem>
+      </ListItem>}
       <Divider light />
       <ListItem button sx={{display:"flex", justifyContent:"center"}}>
       <Link to="/settings"  style={{textAlign:"center", color:"black", textDecoration:"none",textAlign:"center"}}><ListItemText primary="Settings"/></Link> 

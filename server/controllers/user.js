@@ -79,3 +79,51 @@ export const requestForLoan=async (req, res, next) => {
     }
 };
 
+
+export const getAllLoans=async (req, res, next) => {
+  try {
+    const id=req.params.id;
+
+    if(id.toString() !== req.user._id.toString()){
+      return next(createError(401 , "User not authorized!"))
+    }
+    const user=await User.findById({_id:id});
+    if(user.isAdmin){
+      const allLoans= await Loanrequests.find({});
+    if(!allLoans) return next(createError(404, "Don't have any loan requests yet"))
+    res.status(200).json({success:true, allLoans});
+    }else{
+      const allLoans= await Loanrequests.find({borrowerId:id});
+      if(!allLoans) return next(createError(404, "Don't have any loan requests yet"))
+      res.status(200).json({success:true, allLoans});
+    }
+    
+    
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getLoanById=async (req, res, next) => {
+  try {
+    const id=req.params.id;
+    const loanId=req.params.loanId;
+    console.log(id, loanId)
+    if(id.toString() !== req.user._id.toString()){
+      return next(createError(401 , "User not authorized!"))
+    }
+    const user=await User.findById({_id:id});
+    
+    const loan= await Loanrequests.findById({_id:loanId});
+    console.log(loan)
+    if(!loan) return next(createError(404, "Don't have any loan requests yet"))
+    if(user.isAdmin){
+      res.status(200).json({success:true, loan:{...loan, profile:user.profile, fullname:user.fullname, email:user.email, mobileNumber:user.mobileNumber}})
+    }else{
+      res.status(200).json({success:true, loan});
+    }
+    
+  } catch (err) {
+    next(err);
+  }
+};
