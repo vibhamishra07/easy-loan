@@ -199,5 +199,6 @@ export const requestForLoan=createAsyncThunk("/reqforloan" , async(data,thunkAPI
 })
 
 
+
 export const {reset} = authSlice.actions
 export default authSlice.reducer

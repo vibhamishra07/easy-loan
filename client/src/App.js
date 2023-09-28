@@ -3,7 +3,7 @@ import {Routes, Route, Navigate} from 'react-router-dom';
 import SignUpPage from './Pages/SignupPage';
 import LoginPage from './Pages/LoginPage';
 import { useDispatch, useSelector } from 'react-redux';
-import Profile from './Pages/Profile';
+
 
 import ErrorPage from './Pages/404Page';
 import toast, { Toaster } from 'react-hot-toast';
@@ -15,20 +15,23 @@ import UserAllLoans from './Pages/UserAllLoans';
 import UserRequestLoans from './Pages/UserRequestLoans';
 import UserSettings from './Pages/UserSettings';
 
+import ParticularLoan from './Pages/ParticularLoan';
+
 
 function App() {
   const {message, isError, isSuccess, user}=useSelector((state)=>state.auth);
+  const allLoans=useSelector((state)=>state.loan)
   const dispatch=useDispatch();
   useEffect(() => {
     if(isError && message){ toast.error(message)};
     if(isSuccess && message){toast.success(message)};
     dispatch(reset());
   }, [isError, isSuccess, message]);
+   console.log(allLoans)
 
-  // useEffect(()=>{
-  //   user&&dispatch(getUser({id:user._id}))
-  // },[user])
 
+  
+  
   return (
     <div className="App">
     <Routes>
@@ -37,7 +40,8 @@ function App() {
       <Route path="/" element={user?<Layout />:<Navigate to="/login" replace={true}/>}>
         <Route index element={<UserProfilePage />} />
         <Route path="all-loans" element={<UserAllLoans />} />
-        <Route path="request-loan" element={<UserRequestLoans />} />
+        <Route path="/loan/:id" element={<ParticularLoan/>}/>
+        <Route path="request-loan" element={!user.isAdmin?<UserRequestLoans />:<Navigate to={'/'} replace={true}/>} />
         <Route path="settings" element={<UserSettings />} />
       </Route>
       <Route path='*' element={<ErrorPage/>}/>
