@@ -13,10 +13,10 @@ const getAllLoans=async (id)=>{
 }
 
 
-const updateLoanStatus=async (id)=>{
-    const response = await axios.get(`${API_URL}/api/user/get-all-loans/${id}`)
+const updateLoanStatus=async (data)=>{
+    const response = await axios.put(`${API_URL}/api/user/update-loan-status/${data.id}/${data.loanId}`, {status:data.status})
     if(response.data){
-        localStorage.setItem('loans' ,JSON.stringify(response.data.allLoans)); //storing response data to localstorage
+        localStorage.setItem('loans' ,JSON.stringify(response.data.loan)); //storing response data to localstorage
     }
     return response.data
 }

@@ -1,17 +1,28 @@
-import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Button, Fade, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { updateLoanStatus } from '../Redux/features/Loans/loanSlice';
 
 const ParticularLoan = () => {
-
-    const data = useParams();
+   const loan=useSelector((state)=>state.loan);
+   
+       const data = useParams();
     const { user } = useSelector((state) => state.auth);
     const [loanData, setLoanData] = useState(null);
     const dispatch=useDispatch();
+    // const [selectedStatus, setSelectedStatus] = useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,12 +40,17 @@ const ParticularLoan = () => {
         fetchData();
     }, [data.id, user, setLoanData])
    
+    
+    const updateStatus=(status)=>{
 
-    const updateStatus=()=>{
-        dispatch(updateLoanStatus());
+        // setSelectedStatus(status);
+        handleClose();
+        console.log(status)
+        dispatch(updateLoanStatus({status:status, id:user._id, loanId:data.id}));
+        window.location.reload();
     }
     return (
-        <Box sx={{ width: "83%", height: "max-content", padding: "20px 10px 20px 10px", display: "flex", flexDirection: "column", gap: "20px" }}>
+        <Box sx={{ width: "83%", height: "max-content", padding: "20px 20px 20px 20px", display: "flex", flexDirection: "column", gap: "20px" }}>
             <Box>
                 <h3 style={{paddingBottom:"20px"}}>Loan Details</h3>
                 {
@@ -52,52 +68,74 @@ const ParticularLoan = () => {
                                     (user.isAdmin && loanData) && (
                                        <> <TableRow>
                                     <TableCell>Borrower's Full Name</TableCell>
-                                    <TableCell>{loanData.fullname}</TableCell>
+                                    <TableCell>{loanData.borrowerProfile.fullname}</TableCell>
 
                                 </TableRow>
                                 <TableRow>
                                 <TableCell>Email</TableCell>
-                                <TableCell>{loanData.email}</TableCell>
+                                <TableCell>{loanData.borrowerProfile.email}</TableCell>
 
                             </TableRow>
                             <TableRow>
                                 <TableCell>MobileNumber</TableCell>
-                                <TableCell>{loanData.mobileNumber}</TableCell>
+                                <TableCell>{loanData.borrowerProfile.mobileNumber}</TableCell>
 
                             </TableRow>
                             <TableRow>
                                 <TableCell>Gender</TableCell>
-                                <TableCell>{loanData.profile.gender}</TableCell>
+                                <TableCell>{loanData.borrowerProfile.gender}</TableCell>
 
                             </TableRow>
                             <TableRow>
                                 <TableCell>Address</TableCell>
-                                <TableCell>{loanData.profile.address} {loanData.profile.city} {loanData.profile.state} {loanData.profile.pinCode}</TableCell>
+                                <TableCell>{loanData.borrowerProfile.address} {loanData.borrowerProfile.city} {loanData.borrowerProfile.state} {loanData.borrowerProfile.pinCode}</TableCell>
 
-                            </TableRow>
-                            </>
+                            </TableRow></>
+                            
                                     )
                                 }
                                 <TableRow>
                                     <TableCell>Term</TableCell>
-                                    {user.isAdmin?<TableCell>{loanData._doc.term}</TableCell>:<TableCell>{loanData.term}</TableCell>}
+                                    {user.isAdmin?<TableCell>{loanData.term}</TableCell>:<TableCell>{loanData.term}</TableCell>}
 
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>Amount</TableCell>
-                                    {user.isAdmin?<TableCell>{loanData._doc.amount}</TableCell>:<TableCell>{loanData.amount}</TableCell>}
+                                    {user.isAdmin?<TableCell>{loanData.amount}</TableCell>:<TableCell>{loanData.amount}</TableCell>}
 
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>Status</TableCell>
-                                    {user.isAdmin?<TableCell>{loanData._doc.status}  <Button onClick={updateStatus}>Change Status</Button></TableCell>:
+                                    {user.isAdmin?<TableCell>{(loan&&loan.allLoans)?loan.allLoans.status:loanData.status}  <Button
+        id="fade-button"
+        aria-controls={open ? 'fade-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        Change Status
+      </Button>
+      <Menu
+        id="fade-menu"
+        MenuListProps={{
+          'aria-labelledby': 'fade-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+      >
+        <MenuItem onClick={() => updateStatus('pending')}>Pending</MenuItem>
+        <MenuItem onClick={() => updateStatus('approved')}>Approved</MenuItem>
+        <MenuItem onClick={() => updateStatus('rejected')}>Rejected</MenuItem>
+      </Menu></TableCell>:
                                     (<TableCell>{loanData.status}  </TableCell>)
                                     }
 
                                 </TableRow>
                                 <TableRow>
                                     <TableCell>Requested Date</TableCell>
-                                    {user.isAdmin?<TableCell>{new Date(loanData._doc.date).toLocaleDateString()}</TableCell>:
+                                    {user.isAdmin?<TableCell>{new Date(loanData.date).toLocaleDateString()}</TableCell>:
                                     <TableCell>{new Date(loanData.date).toLocaleDateString()}</TableCell>
                                     }
                                     
@@ -116,7 +154,7 @@ const ParticularLoan = () => {
                                     }))
                                 }
                                 {
-                                    (user.isAdmin && loanData._doc.allTerms.map((element, index) => {
+                                    (user.isAdmin && loanData.allTerms.map((element, index) => {
                                         (loanData && console.log(loanData.profile))
                                         return (<>
                                             <TableRow>
