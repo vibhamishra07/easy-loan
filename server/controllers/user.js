@@ -5,7 +5,9 @@ import  {Loanrequests } from "../models/LoanRequest.js";
 export const getUser=async (req, res, next) => {
     try {
       const id=req.params.id;
-      const user= await User.findById({_id:id}).select("+password");
+      console.log("hello", id)
+      const user= await User.findById({_id:id});
+      console.log(user)
       res.status(200).json({success: true, user});
     } catch (err) {
       next(err);
@@ -58,11 +60,25 @@ export const requestForLoan=async (req, res, next) => {
       });
       console.log(totalTermAmounts)
       if(totalTermAmounts!=parseInt(amount)) return next(createError(404, "Please fill terms amount equals to total amount"))
+
+      const userDetails=await User.findById({_id:id});
       const newLoanRequest= new Loanrequests({
           amount,
           term,
           allTerms:inputFields,
-          borrowerId:req.params.id
+          borrowerId:id,
+          borrowerProfile:{
+            fullname:userDetails.fullname,
+            email:userDetails.email,
+        mobileNumber:userDetails.mobileNumber,
+        address:userDetails.profile.address,
+        city:userDetails.profile.city,
+        state:userDetails.profile.state,
+        pinCode:userDetails.profile.pinCode,
+        dob:userDetails.profile.dob,
+        gender:userDetails.profile.gender,
+        country:userDetails.profile.country
+          }
       })
 
       await newLoanRequest.save();
@@ -118,10 +134,39 @@ export const getLoanById=async (req, res, next) => {
     console.log(loan)
     if(!loan) return next(createError(404, "Don't have any loan requests yet"))
     if(user.isAdmin){
-      res.status(200).json({success:true, loan:{...loan, profile:user.profile, fullname:user.fullname, email:user.email, mobileNumber:user.mobileNumber}})
+      res.status(200).json({success:true, loan})
     }else{
       res.status(200).json({success:true, loan});
     }
+    
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const updateLoanStatus=async (req, res, next) => {
+  try {
+    const id=req.params.id;
+    const loanId=req.params.loanId;
+    const status=req.body.status
+    console.log("hello")
+    console.log(id, loanId, status)
+    if(id.toString() !== req.user._id.toString()){
+      return next(createError(401 , "User not authorized!"))
+    }
+    const user=await User.findById({_id:id});
+    if(!user.isAdmin){   //IF he's not an admin that can't change status
+       return next(createError(409, "You are not authorized"))
+    }
+    const loan= await Loanrequests.findByIdAndUpdate({_id:loanId},{
+      $set:{
+          status:status
+      }
+    },{ new: true });
+    console.log(loan)
+    res.status(200).json({success:true, message:"status updated successfully", loan})
+    
     
   } catch (err) {
     next(err);

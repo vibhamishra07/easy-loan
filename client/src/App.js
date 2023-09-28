@@ -29,7 +29,7 @@ function App() {
   }, [isError, isSuccess, message]);
    console.log(allLoans)
 
-
+ 
   
   
   return (
@@ -38,11 +38,11 @@ function App() {
       <Route path="/login" element={!user?<LoginPage/> : <Navigate to="/" replace={true}/>}/>
       <Route path="/signup" element={!user? <SignUpPage/> :<Navigate to="/" replace={true}/>}/>
       <Route path="/" element={user?<Layout />:<Navigate to="/login" replace={true}/>}>
-        <Route index element={<UserProfilePage />} />
-        <Route path="all-loans" element={<UserAllLoans />} />
-        <Route path="/loan/:id" element={<ParticularLoan/>}/>
-        <Route path="request-loan" element={!user.isAdmin?<UserRequestLoans />:<Navigate to={'/'} replace={true}/>} />
-        <Route path="settings" element={<UserSettings />} />
+        <Route index element={user?<UserProfilePage />:<Navigate to="/login" replace={true}/>} />
+        <Route path="all-loans" element={user?<UserAllLoans />:<Navigate to="/login" replace={true}/>} />
+        <Route path="/loan/:id" element={user?<ParticularLoan/>:<Navigate to="/login" replace={true}/>}/>
+        <Route path="request-loan" element={(user && !user.isAdmin)?<UserRequestLoans />:<Navigate to={'/'} replace={true}/>} />
+        <Route path="settings" element={user?<UserSettings />:<Navigate to="/login" replace={true}/>} />
       </Route>
       <Route path='*' element={<ErrorPage/>}/>
     </Routes>

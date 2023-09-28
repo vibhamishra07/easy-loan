@@ -27,7 +27,7 @@ export const UserProfilePage = () => {
     const dispatch=useDispatch();
     useEffect(()=>{
     user&&dispatch(getUser({id:user._id}))
-  },[user])
+  },[])
     return (
         <Box sx={{ position: "relative", width: "83%", gap:"50px",  alignItems:"center",  display: "flex", flexDirection:"column" }}>
             <Box sx={{ width: "50%", height: "max-content",padding: "20px 10px 20px 10px", }}>

@@ -176,10 +176,10 @@ export const submitFullUserProfile= createAsyncThunk("/add-full-user-profile" , 
  })
 
 //  Get User
-export const getUser= createAsyncThunk("/getUser" , async(id,thunkAPI)=>{
+export const getUser= createAsyncThunk("/getUser" , async(data,thunkAPI)=>{
    
     try {
-       return await authService.getUser(id);
+       return await authService.getUser(data.id);
     } catch (error) {
        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
        return thunkAPI.rejectWithValue(message) 
