@@ -76,7 +76,7 @@ const UserAllLoans = () => {
         setpg(0);
     }
   return (
-    <Box sx={{ alignItems:"center",  display: "flex", flexDirection:"column" , width:"83%", backgroundColor:"purple", padding:"20px 0 20px 0"}}>
+    <Box sx={{ alignItems:"center",  display: "flex", flexDirection:"column" , width:"83%", padding:"20px 0 20px 0"}}>
         <Paper>
             <h1 style={{ textAlign: "center", color: "green" , paddingBottom:"10px"}}>All Loans Status</h1>
             <TableContainer component={Paper}>
